@@ -5,12 +5,20 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   </head>
-  <body class="bg-grey-lighter">
+  <style>
+    body {
+      /* background-blend-mode: scree; */
+    }
+  </style>
+  <body class="bg-grey-lighter bg-no-repeat bg-cover">
     <div class="min-h-screen w-full p-2">
+      <h1 id="greeting" class="text-5xl font-hairline font-sans text-center p-4"></h1>
+      <h1 id="time" class="text-5xl font-hairline font-sans text-center p-4">  </h1>
       <form class="w-3/4 m-auto mt-4">
-        <input type="text" name="q" id="search" class="bg-grey-lightest border shadow :hover-shadow-md focus:shadow-md w-full p-4 rounded-full">
+        <input type="text" name="q" id="search" class="bg-grey-lightest border shadow :hover-shadow-md focus:shadow-md w-full p-4 rounded-full text-grey-dark" placeholder="Google Search">
       </form>
-      <p class="capitalize text-3xl p-2 mt-8 m-auto w-1/2 text-center font-sans" id="qoute"></p>
+      <div class="text-3xl p-2 mt-8 m-auto w-3/4 text-center font-sans" id="qoute"></div>
+      <div id="demo"></div>
     </div>
   </body>
   <script>
@@ -31,7 +39,76 @@
 
     let qoute = document.querySelector('#qoute')
 
-    qoute.innerHTML = '"death is the solution to all problems, no man no problem", the wise blessed t mahuni'
+    qoute.innerHTML = ''
+
+    let qouteUrl = 'http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1'
+    fetch(qouteUrl)
+    .then(response => {
+      return response.json()
+    })
+    .then(qouteText => {
+      qoute.innerHTML = qouteText[0].content
+      qoute.innerHTML += 'by ' + qouteText[0].title
+    })
+
+    let imageElement = document.querySelector('#image')
+    var picurl = 'https://pixabay.com/api/?key=8149060-96b35330dd1d6137a4331b230&q=technology&image_type=photo&pretty=true'
+    fetch(picurl)
+    .then((response) => {
+        return response.json()
+    })
+    .then(backgroundpic => {
+      let randomNumber = Math.floor(Math.random()*backgroundpic.hits.length)
+      console.log(randomNumber)
+      console.log(backgroundpic)
+      document.body.style.backgroundImage = "linear-gradient(to right, rgba(126, 213, 111, 0.7), rgba(40, 180, 133, 0.7)), url('"+ backgroundpic.hits[randomNumber].largeImageURL + "')"; 
+    })
+
+    function getTime() {
+      let hour = new Date().getHours()
+      hour = hour == 0 ? '00':hour
+      let minutes = new Date().getMinutes()
+      minutes = minutes == 0 ? '00':minutes
+      minutes = minutes == 1 ? '01':minutes
+      minutes = minutes == 2 ? '02':minutes
+      minutes = minutes == 3 ? '03':minutes
+      minutes = minutes == 4 ? '04':minutes
+      minutes = minutes == 5 ? '05':minutes
+      minutes = minutes == 6 ? '06':minutes
+      minutes = minutes == 7 ? '07':minutes
+      minutes = minutes == 8 ? '08':minutes
+      minutes = minutes == 9 ? '09':minutes
+      let timeViewer = document.querySelector('#time')
+      let greetingViewer = document.querySelector('#greeting')
+      let greeting = ''
+      if(hour >= 0 && hour < 12) {
+        greeting = 'Good Morning'
+        greetingViewer.innerText = greeting
+      } else if(hour >= 12 && hour < 18) {
+        greeting = 'Good Afternoon'
+        greetingViewer.innerText = greeting
+      } else if(hour >= 18 && hour < 0) {
+        greeting = 'Good Evening'
+        greetingViewer.innerText = greeting
+      }
+      timeViewer.innerText = hour + ":" + minutes
+    }
+
+    setInterval( getTime, 1000)
+
+    var x = document.getElementById("demo");
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+      } else {
+        x.innerHTML = "Geolocation is not supported by this browser.";
+      }
+    }
+
+    function showPosition(position) {
+      x.innerHTML = "Latitude: " + position.coords.latitude +
+      "<br>Longitude: " + position.coords.longitude;
+    }
 
   </script>
 </html>
