@@ -23,10 +23,11 @@
   </body>
   <script>
     function block(e) {
-      
+      let inputText = document.querySelector('#search')
       if(e.key === 'Enter') {
         e.preventDefault()
         testingMadness(this.value) 
+        inputText.value = ''
       }
     }
 
